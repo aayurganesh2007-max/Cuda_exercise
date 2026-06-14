@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Configuration
 MATRIX_SIZES = [256, 512, 1024, 2048, 4096, 8192]
-# === MINIMAL CHANGE 1: Increase warmups to allow torch.compile to finish compilation before timing ===
+# = Increase warmups to allow torch.compile to finish compilation before timing =
 NUM_WARMUP = 5  
 NUM_TIMED_RUNS = 10 
 DTYPE = torch.float32
@@ -17,7 +17,7 @@ print(f"Running benchmarks on backend: {device}\n")
 def transpose_add_cuda(A: torch.Tensor) -> torch.Tensor:
     return A + A.T
 
-# === MINIMAL CHANGE 2: Compile the function to fuse operations ===
+# = Compile the function to fuse operations =
 # max-autotune forces the compiler to find the absolute fastest fused memory kernel layout
 transpose_add_fused = torch.compile(transpose_add_cuda, mode="max-autotune")
 
@@ -29,14 +29,14 @@ def benchmark_size(N: int) -> dict:
 
     # Warm-up phase (Compilation physically occurs on the first iteration here)
     for _ in range(NUM_WARMUP):
-        # === MINIMAL CHANGE 3: Call the compiled function version ===
+        # = Call the compiled function version =
         _ = transpose_add_fused(A)
 
     torch.cuda.synchronize()
     t_start = time.perf_counter()
     
     for _ in range(NUM_TIMED_RUNS):
-        # === MINIMAL CHANGE 4: Call the compiled function version ===
+        # = Call the compiled function version =
         _ = transpose_add_fused(A)
         
     torch.cuda.synchronize()
