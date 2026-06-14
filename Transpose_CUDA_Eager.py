@@ -9,7 +9,7 @@ NUM_WARMUP = 3
 NUM_TIMED_RUNS = 10 
 DTYPE = torch.float32
 
-# === CHANGE 1: Target Kaggle's GPU instead of CPU ===
+# =Target Kaggle's GPU instead of CPU =
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Running benchmarks on backend: {device}\n")
 
@@ -21,7 +21,7 @@ def transpose_add_cuda(A: torch.Tensor) -> torch.Tensor:
     return A + A.T
 
 def benchmark_size(N: int) -> dict:
-    # === CHANGE 2: Allocate input matrix directly on the GPU VRAM ===
+    # =Allocate inp ut matrix directly on the GPU VRAM =
     A = torch.randn(N, N, dtype=DTYPE, device=device)
     
     matrix_bytes = N * N * 4
@@ -31,14 +31,14 @@ def benchmark_size(N: int) -> dict:
     for _ in range(NUM_WARMUP):
         _ = transpose_add_cuda(A)
 
-    # === CHANGE 3: Synchronize CUDA stream before opening the clock ===
+    # = Synchronize CUDA stream before opening the clock =
     torch.cuda.synchronize()
     t_start = time.perf_counter()
     
     for _ in range(NUM_TIMED_RUNS):
         _ = transpose_add_cuda(A)
         
-    # === CHANGE 4: Synchronize CUDA stream before stopping the clock ===
+    # = Synchronize CUDA stream before stopping the clock =
     torch.cuda.synchronize()
     t_end = time.perf_counter()
 
@@ -62,7 +62,7 @@ def main():
         results.append(benchmark_size(N))
         
     df = pd.DataFrame(results)
-    # === CHANGE 5: Updated print label ===
+    # = Updated print label =
     print("\nFinal Results: PYTORCH CUDA EAGER")
     print(df.to_string(index=False))
     
