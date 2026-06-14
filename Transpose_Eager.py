@@ -10,15 +10,14 @@ NUM_WARMUP = 3 #makes the system pre-allocate the memory buffers and stabilize i
 NUM_TIMED_RUNS = 10 # this is for normalising the external noise
 DTYPE = torch.float32
 
-#CORE COMPUTATION (CPU EAGER)
+#Core Computation(CPU EAGER)
 def transpose_add_cpu(A: torch.Tensor) -> torch.Tensor:
     """
     Computes A + A^T in eager mode on the CPU.
-    A.T creates a view with swapped strides, then '+' dispatches the math kernel.
     """
     return A + A.T
 
-#BENCHMARK RUNNER
+#Benchmark Runner
 def benchmark_size(N: int) -> dict:
     # 1. Allocate input matrix directly in system memory
     A = torch.randn(N, N, dtype=DTYPE)#Does a random initialisation of the matrix and uses more floating point to prevent the compiler to optimise through shortcuts
@@ -51,7 +50,7 @@ def benchmark_size(N: int) -> dict:
         "Throughput (GB/s)": round(throughput_gb_s, 2)
     }
 
-#MAIN EXECUTION
+#Main Execution
 def main():
     results = []
     for N in MATRIX_SIZES:
